@@ -1,6 +1,8 @@
 # Ghost Games: What Empty Stadiums Reveal About Home Advantage
 
-![CI](https://github.com/akars7/ghost-games/actions/workflows/ci.yml/badge.svg)
+![CI/CD](https://github.com/akars7/ghost-games/actions/workflows/ci.yml/badge.svg)
+
+**Live app:** https://ghost-games-kaan.azurewebsites.net · a plain-English version of the results, with interactive charts
 
 ## Question
 **Do crowds cause home advantage in football? When COVID emptied Europe's stadiums for most of a season, how much of the home edge in goals, points and referee decisions disappeared?**
@@ -84,6 +86,33 @@ Bet365 odds were turned into a home-win probability (with the bookmaker's margin
 
 The odds did lower home teams' chances, but not enough: compared with the fans period, the market overrated empty-stadium home teams by about 3 points (CI 0.9 to 5.2). The early sample is too small to say whether the market learned over time. This is a test of how prices absorb new information, not betting advice.
 
+## Web app and deployment
+The results are also a 4-page **Streamlit** app with interactive **Plotly** charts, written for coaches and other non-technical readers. A league picker switches every number and chart between all leagues and each of the five, and the choice carries across pages.
+
+| Page | Shows |
+|---|---|
+| Home | The result in plain words, and win/draw/loss with and without fans |
+| Goals and points | Share of home advantage lost, with CIs; home advantage over time |
+| Referees | Cards and fouls, home vs away; did any referee stand out? |
+| Leagues and market | Each league; did the betting odds see it? |
+
+```mermaid
+flowchart LR
+    A[Raw data + analysis<br/>on a laptop] -->|ghost-games-export| B[app/data<br/>small CSVs]
+    B --> C[git push]
+    C --> D[GitHub Actions:<br/>ruff + pytest]
+    D --> E[Docker build<br/>linux/amd64]
+    E --> F[GitHub Container<br/>Registry]
+    F --> G[Azure App Service<br/>Web App for Containers]
+```
+
+- **Separation:** the heavy analysis runs locally. The app reads only the exported result tables, so the container is small, starts fast and never depends on scraping FBref.
+- **CI/CD:** every push to `main` runs lint and tests, including a smoke test that runs each app page with Streamlit's `AppTest`. Only if they pass is the image built and deployed. Each deploy uses the image tagged with its commit, so any version can be traced back to its code.
+- **Container:** `python:3.11-slim`, dependencies installed in their own layer so rebuilds are fast, runs as a non-root user, with a health check.
+- **Secrets:** the Azure publish profile lives in GitHub Secrets, piped straight from the Azure CLI.
+
+Setup steps, costs and troubleshooting: [docs/DEPLOY.md](docs/DEPLOY.md).
+
 ## Threats to validity
 - **Other changes at the same time:** five substitutes, a crowded fixture list and a short pre-season. Separating these from the crowd effect is the hardest part.
 - **Attendance quality.** FBref leaves attendance blank for some matches. Those fall back to the dates in `config/closed_doors.csv`, and matches with neither are labelled "unknown" and left out.
@@ -94,6 +123,9 @@ The odds did lower home teams' chances, but not enough: compared with the fans p
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,analysis]"
 pytest -q     # includes a simulation test that recovers a known effect
+
+pip install -r app/requirements.txt
+streamlit run app/Home.py
 ```
 
 ## Roadmap
