@@ -1,0 +1,5 @@
+# send only the app to Docker: the raw data and notebooks stay out of the image
+*
+!app/
+app/**/__pycache__
+app/**/.DS_Store
