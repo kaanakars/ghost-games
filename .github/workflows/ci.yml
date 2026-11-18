@@ -54,17 +54,18 @@ jobs:
 
   deploy:
     needs: build
-    # skipped until the Azure app exists (see docs/DEPLOY.md)
-    if: github.event_name != 'pull_request' && vars.AZURE_WEBAPP_NAME != ''
+    # skipped until Azure is set up (see docs/DEPLOY.md)
+    if: github.event_name != 'pull_request' && vars.AZURE_CONTAINERAPP_NAME != ''
     runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: ${{ steps.deploy.outputs.webapp-url }}
     steps:
-      - name: Deploy to Azure Web App
-        id: deploy
-        uses: azure/webapps-deploy@v3
+      - name: Sign in to Azure (service principal for this resource group only)
+        uses: azure/login@v2
         with:
-          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ env.IMAGE }}:${{ github.sha }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy this commit's image to Azure Container Apps
+        run: |
+          az extension add --name containerapp --upgrade --yes
+          az containerapp update \
+            --name ${{ vars.AZURE_CONTAINERAPP_NAME }} \
+            --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+            --image ${{ env.IMAGE }}:${{ github.sha }}

@@ -32,3 +32,6 @@ fetch_log.txt
 
 # small result tables the web app reads
 !app/data/*.csv
+
+# never commit Azure credentials
+azure-creds*.json

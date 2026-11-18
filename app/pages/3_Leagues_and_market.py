@@ -6,6 +6,7 @@ import streamlit as st
 from common import (
     EMPTY,
     FANS,
+    FLAGS,
     INK,
     LEAGUES,
     MUTED,
@@ -35,7 +36,7 @@ outcome = (
     or "goal_diff"
 )
 table = load("by_league").query("outcome == @outcome").copy()
-table["name"] = table["league"].map(LEAGUES)
+table["name"] = table["league"].map(lambda code: f"{FLAGS[code]} {LEAGUES[code]}")
 table["drop"] = table["fans"] - table["empty"]
 table = table.sort_values("drop")
 
@@ -107,7 +108,7 @@ fig.add_bar(
     x=periods,
     y=market["predicted"],
     name="Odds predicted",
-    marker_color="#c9d3cd",
+    marker_color="#b9c6bf",
     text=[f"{v:.1%}" for v in market["predicted"]],
     textposition="outside",
 )
@@ -115,7 +116,7 @@ fig.add_bar(
     x=periods,
     y=market["actual"],
     name="Actually happened",
-    marker_color=[FANS, EMPTY, EMPTY],
+    marker_color=INK,
     text=[f"{v:.1%}" for v in market["actual"]],
     textposition="outside",
     customdata=market[["gap", "ci_low", "ci_high", "matches"]] * [100, 100, 100, 1],

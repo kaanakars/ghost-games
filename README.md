@@ -2,7 +2,7 @@
 
 ![CI/CD](https://github.com/akars7/ghost-games/actions/workflows/ci.yml/badge.svg)
 
-**Live app:** https://ghost-games-kaan.azurewebsites.net · a plain-English version of the results, with interactive charts
+**Live app:** https://ghost-games.yellowriver-1b3c846c.canadacentral.azurecontainerapps.io · a plain-English version of the results, with interactive charts
 
 ## Question
 **Do crowds cause home advantage in football? When COVID emptied Europe's stadiums for most of a season, how much of the home edge in goals, points and referee decisions disappeared?**
@@ -103,13 +103,14 @@ flowchart LR
     C --> D[GitHub Actions:<br/>ruff + pytest]
     D --> E[Docker build<br/>linux/amd64]
     E --> F[GitHub Container<br/>Registry]
-    F --> G[Azure App Service<br/>Web App for Containers]
+    F --> G[Azure Container Apps<br/>scales to zero]
 ```
 
 - **Separation:** the heavy analysis runs locally. The app reads only the exported result tables, so the container is small, starts fast and never depends on scraping FBref.
 - **CI/CD:** every push to `main` runs lint and tests, including a smoke test that runs each app page with Streamlit's `AppTest`. Only if they pass is the image built and deployed. Each deploy uses the image tagged with its commit, so any version can be traced back to its code.
 - **Container:** `python:3.11-slim`, dependencies installed in their own layer so rebuilds are fast, runs as a non-root user, with a health check.
-- **Secrets:** the Azure publish profile lives in GitHub Secrets, piped straight from the Azure CLI.
+- **Secrets:** GitHub signs in to Azure with a service principal limited to one resource group, stored in GitHub Secrets.
+- **Hosting:** Azure Container Apps, scaling to zero when idle. App Service was the first plan, but the student subscription had no App Service quota; the reasons are in the deploy guide.
 
 Setup steps, costs and troubleshooting: [docs/DEPLOY.md](docs/DEPLOY.md).
 

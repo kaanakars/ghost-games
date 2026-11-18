@@ -123,11 +123,11 @@ fig = slope(
     {k: empty[v] for k, v in outcomes.items()},
     {"Home win": HOME, "Draw": NEUTRAL, "Away win": AWAY},
 )
-drop = (fans["home_win"] - empty["home_win"]) * 100
 show(
     style(
         fig,
-        f"Without fans, home wins fell {drop:.0f} points and away wins took them",
+        f"Without fans, home wins fell from {fans['home_win']:.0%} to {empty['home_win']:.0%}, "
+        "and away wins took them",
         f"{name}: share of matches, {int(fans['n_matches']):,} with fans and "
         f"{int(empty['n_matches']):,} empty",
         height=420,

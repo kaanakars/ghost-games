@@ -32,6 +32,15 @@ LEAGUES = {
     "I1": "Serie A",
     "F1": "Ligue 1",
 }
+# country flags, not league logos: the logos are the leagues' trademarks
+FLAGS = {
+    "ALL": "🌍",
+    "E0": "🏴\U000e0067\U000e0062\U000e0065\U000e006e\U000e0067\U000e007f",
+    "D1": "🇩🇪",
+    "SP1": "🇪🇸",
+    "I1": "🇮🇹",
+    "F1": "🇫🇷",
+}
 OUTCOMES = {
     "goal_diff": "Goal difference",
     "goal_diff_capped": "Goal difference (capped at ±3)",
@@ -60,6 +69,10 @@ h1 { font-weight: 800 !important; }
 .kpi .value { color: #16352a; font-size: 2.3rem; font-weight: 800; line-height: 1.15;
   font-variation-settings: "wdth" 115; }
 .kpi .note { color: #5b6b63; font-size: 0.85rem; }
+.chart-head { background: #ffffff; border: 1px solid #e6e9e4; border-bottom: 0;
+  border-radius: 10px 10px 0 0; padding: 14px 16px 2px; margin-bottom: -16px; }
+.chart-title { font-weight: 700; font-size: 1.1rem; color: #16352a; }
+.chart-sub { color: #5b6b63; font-size: 0.88rem; margin-top: 2px; }
 @media (max-width: 700px) { .kpis { grid-template-columns: 1fr; } }
 </style>
 """
@@ -81,7 +94,7 @@ def league_picker() -> str:
     choice = st.segmented_control(
         "League",
         options=list(LEAGUES),
-        format_func=LEAGUES.get,
+        format_func=lambda code: f"{FLAGS[code]} {LEAGUES[code]}",
         default=saved,
         key="league_widget",
     )
@@ -111,25 +124,16 @@ def kpis(cards: list[tuple[str, str, str, str]]) -> None:
 
 
 def style(fig: go.Figure, title: str, subtitle: str = "", height: int = 400) -> go.Figure:
-    """House style: the title states the finding, the subtitle says what is plotted."""
-    text = f"<b>{title}</b>"
-    if subtitle:
-        text += f"<br><span style='font-size:13px;color:{MUTED}'>{subtitle}</span>"
+    """House style. The title states the finding, the subtitle says what is plotted.
+
+    Titles are kept in the figure's meta and written as page text by show(),
+    so readers can select and copy them (text inside a chart can't be).
+    """
     fig.update_layout(
-        # pin the title to the top of the frame, so short charts don't clip it
-        title={
-            "text": text,
-            "x": 0,
-            "xanchor": "left",
-            "y": 1,
-            "yref": "container",
-            "yanchor": "top",
-            "pad": {"t": 12},
-            "font": {"size": 18},
-        },
+        meta={"title": title, "subtitle": subtitle},
         height=height,
         font={"family": FONT, "color": INK, "size": 13},
-        margin={"l": 10, "r": 20, "t": 90 if subtitle else 60, "b": 10},
+        margin={"l": 10, "r": 20, "t": 40, "b": 10},
         paper_bgcolor="#ffffff",
         plot_bgcolor="#ffffff",
         legend={"orientation": "h", "yanchor": "bottom", "y": 1.0, "x": 1, "xanchor": "right"},
@@ -142,6 +146,13 @@ def style(fig: go.Figure, title: str, subtitle: str = "", height: int = 400) -> 
 
 
 def show(fig: go.Figure) -> None:
+    meta = fig.layout.meta or {}
+    if meta.get("title"):
+        sub = f'<div class="chart-sub">{meta["subtitle"]}</div>' if meta.get("subtitle") else ""
+        st.markdown(
+            f'<div class="chart-head"><div class="chart-title">{meta["title"]}</div>{sub}</div>',
+            unsafe_allow_html=True,
+        )
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 

@@ -35,6 +35,8 @@ if league == "ALL":
     treatment = "closed_doors" if choice.startswith("Fans") else "crowd_level"
 
 table = load("share_lost").query("league == @league and treatment == @treatment").iloc[::-1]
+counts = load("group_means").query("league == @league").set_index("crowd_status")["n_matches"]
+n_note = f"{int(counts['empty']):,} empty-stadium matches vs {int(counts['fans']):,} with fans"
 labels = [OUTCOMES[o] for o in table["outcome"]]
 
 fig = go.Figure()
@@ -67,7 +69,8 @@ show(
     style(
         fig,
         "Every measure agrees: most of the home edge left with the fans",
-        f"{name}: share of home advantage lost, shaded bars are 95% confidence intervals",
+        f"{name}: share of home advantage lost. Shaded bars are 95% confidence intervals, "
+        f"from {n_note}; one league alone has fewer matches, so its bars are wider.",
         height=380,
     )
 )
