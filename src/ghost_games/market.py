@@ -44,7 +44,6 @@ def market_check(matches: pd.DataFrame, n_resamples: int = 2000, seed: int = 0) 
     rows = []
     for period, group in df.groupby("period"):
         surprise = group["market_surprise"].to_numpy()
-        # resample matches, keep the mean surprise each time
         boot = rng.choice(surprise, size=(n_resamples, surprise.size)).mean(axis=1)
         low, high = np.quantile(boot, [0.025, 0.975])
         rows.append(

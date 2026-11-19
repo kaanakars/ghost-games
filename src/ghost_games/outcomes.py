@@ -29,12 +29,10 @@ def add_outcomes(matches: pd.DataFrame) -> pd.DataFrame:
     away_points = np.select([out["goal_diff"] < 0, out["goal_diff"] == 0], [3, 1], default=0)
     # use this one in models: home_points is about 1.4 even with no home edge, this is 0
     out["points_diff"] = out["home_points"] - away_points
-    # per match this isn't "points above 1.37", but its average is exactly that (METHODS 2.5)
     out["home_points_edge"] = out["points_diff"] / 2
 
     out["goal_diff_capped"] = out["goal_diff"].clip(-GOAL_DIFF_CAP, GOAL_DIFF_CAP)
 
-    # 0/1 columns: their average is a rate, e.g. mean of home_win = home win rate
     out["home_win"] = (out["goal_diff"] > 0).astype(int)
     out["draw"] = (out["goal_diff"] == 0).astype(int)
     out["away_win"] = (out["goal_diff"] < 0).astype(int)

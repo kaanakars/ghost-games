@@ -27,7 +27,6 @@ def test_market_check_finds_overrated_home_teams():
             "closed_doors": empty,
             "crowd_status": np.where(empty == 1, "empty", "fans"),
             "home_win": (rng.random(n) < true_p).astype(int),
-            # odds that give 45% after the margin is removed
             "odds_home": 1 / (0.45 * 1.05),
             "odds_draw": 1 / (0.27 * 1.05),
             "odds_away": 1 / (0.28 * 1.05),

@@ -1,6 +1,6 @@
 """Match attendance from FBref, joined to the football-data results.
 
-Download once on your own machine (needs Chrome; FBref blocks fast scraping):
+Downloaded once, locally (needs Chrome; FBref blocks fast scraping):
 
     pip install -e ".[fbref]"
     ghost-games-fetch-attendance
@@ -99,7 +99,6 @@ def load_attendance(raw_dir: str | Path = ATTENDANCE_DIR) -> pd.DataFrame:
         missing = {"date", "home_team", "away_team", "attendance"} - set(df.columns)
         if missing:
             raise ValueError(f"{path.name} is missing columns: {sorted(missing)}")
-        # the league code comes from the file name, e.g. E0_1920.csv
         df["league"] = path.stem.split("_")[0]
         frames.append(df[["league", "date", "home_team", "away_team", "attendance"]])
 
@@ -107,7 +106,6 @@ def load_attendance(raw_dir: str | Path = ATTENDANCE_DIR) -> pd.DataFrame:
     # FBref exports have empty separator rows between match weeks
     out = out.dropna(subset=["home_team", "away_team"])
     out["date"] = pd.to_datetime(out["date"])
-    # "52,152" -> 52152, empty -> NaN
     out["attendance"] = pd.to_numeric(
         out["attendance"].astype(str).str.replace(",", "", regex=False), errors="coerce"
     )

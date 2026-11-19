@@ -40,7 +40,6 @@ n_note = f"{int(counts['empty']):,} empty-stadium matches vs {int(counts['fans']
 labels = [OUTCOMES[o] for o in table["outcome"]]
 
 fig = go.Figure()
-# CI as a thick, light bar behind the estimate
 fig.add_bar(
     y=labels,
     x=table["ci_high"] - table["ci_low"],
@@ -90,7 +89,6 @@ series = load("over_time").query("league == @league and outcome == @outcome").co
 series["date"] = series["date"].astype("datetime64[ns]")
 
 fig = go.Figure()
-# shade each run of quarters where most matches were empty
 empty = (series["share_empty"] > 0.5).to_numpy()
 runs = np.flatnonzero(np.diff(np.r_[0, empty.astype(int), 0]))
 for start, end in zip(runs[::2], runs[1::2], strict=True):

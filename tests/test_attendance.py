@@ -105,7 +105,6 @@ def test_status_uses_attendance_and_falls_back_to_dates():
     # empty matches must count as crowd level 0, not be dropped as missing
     assert out.loc[out["crowd_status"] == "empty", "crowd_level"].eq(0).all()
     assert out["crowd_level"].iloc[0] == 1.0
-    # the dates said "empty" for the 12,000 crowd: the check table shows that disagreement
     table = compare_with_dates(out)
     assert table.loc["empty", "partial"] == 1
 

@@ -209,6 +209,5 @@ def test_referee_shrinkage_pulls_noisy_referees_to_the_middle():
                 )
     table = referee_table(pd.DataFrame(rows), min_fans=30, min_empty=10)
     assert len(table) == 12
-    # shrunk values are much closer together than the raw ones
     assert table["shrunk_change"].std() < table["change"].std() / 2
     assert table["shrunk_change"].mean() == pytest.approx(-0.3, abs=0.3)

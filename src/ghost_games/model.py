@@ -7,8 +7,8 @@ treatment is either closed_doors (0/1) or crowd_level (0 = empty, 1 = normal cro
 Strength is +1 for the home team and -1 for the away team (same idea as RAPM),
 so it can't take credit for the home edge.
 
-Adding the same number to every team's strength gives the same predictions,
-so we drop one team per league-season and measure the others against it.
+One reference team per league-season is dropped: strengths only mean something
+relative to each other.
 """
 
 from __future__ import annotations
@@ -36,10 +36,9 @@ class HomeAdvantageFit:
     def share_of_advantage_lost(self) -> float:
         """e.g. 0.6 = empty stadiums removed 60% of the home edge."""
         if self.treatment == "closed_doors":
-            # home_adv is the edge with fans; effect is how much empty stadiums change it
             with_fans = self.home_adv
             return -self.effect / with_fans if with_fans else float("nan")
-        # for crowd_level, home_adv is the edge with no crowd; a full crowd adds effect
+        # crowd_level: home_adv is the edge with no crowd, a full crowd adds effect
         with_fans = self.home_adv + self.effect
         return self.effect / with_fans if with_fans else float("nan")
 

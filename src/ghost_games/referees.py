@@ -29,7 +29,7 @@ def referee_table(
     With 10-30 empty matches per referee, the raw change is very noisy: the most
     extreme referees are often just lucky or unlucky. shrunk_change pulls each
     referee toward the overall change, more strongly when their sample is small
-    (empirical Bayes, the same idea as ridge in RAPM). Rank referees by that one.
+    (empirical Bayes, the same idea as ridge in RAPM).
     """
     data = matches.dropna(subset=["referee", outcome])
     data = data[data["crowd_status"].isin(["fans", "empty"])]
@@ -49,7 +49,6 @@ def referee_table(
         }
     )
     out["change"] = out["edge_empty"] - out["edge_fans"]
-    # standard error of a difference of two means: sqrt(var1/n1 + var2/n2)
     out["se"] = np.sqrt(
         table["var_fans"] / table["count_fans"] + table["var_empty"] / table["count_empty"]
     )

@@ -62,7 +62,6 @@ for _, row in table.iterrows():
         startstandoff=10,
     )
     for col, colour, pos in [("fans", FANS, "middle right"), ("empty", EMPTY, "middle left")]:
-        # put each label on the outer side of its dot
         if row["fans"] < row["empty"]:
             pos = "middle left" if col == "fans" else "middle right"
         fig.add_scatter(

@@ -63,7 +63,6 @@ kpis(
     ]
 )
 
-# where the home edge went: the part the crowd took away vs the part that stayed
 h, e = shares.loc["goal_diff", "home_adv"], shares.loc["goal_diff", "effect"]
 kept, lost = max(h + e, 0), min(-e, h)
 fig = go.Figure()

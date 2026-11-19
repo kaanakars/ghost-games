@@ -15,7 +15,6 @@ RUN pip install -r requirements.txt
 
 COPY app/ .
 
-# don't run as root inside the container
 RUN useradd --create-home appuser
 USER appuser
 

@@ -12,10 +12,9 @@ import streamlit as st
 DATA = Path(__file__).parent / "data"
 REPO = "https://github.com/kaanakars/ghost-games"
 
-# fans vs empty
 FANS = "#2a78d6"  # blue
 EMPTY = "#eb6834"  # orange
-# home vs away (a different pair, so it's never confused with fans vs empty)
+# home vs away: a separate colour pair from fans vs empty
 HOME = "#1d7a4c"  # green
 AWAY = "#b04a9c"  # magenta
 NEUTRAL = "#8f8d87"  # draws
@@ -32,7 +31,7 @@ LEAGUES = {
     "I1": "Serie A",
     "F1": "Ligue 1",
 }
-# country flags, not league logos: the logos are the leagues' trademarks
+# flags, not league logos (trademarks)
 FLAGS = {
     "ALL": "🌍",
     "E0": "🏴\U000e0067\U000e0062\U000e0065\U000e006e\U000e0067\U000e007f",

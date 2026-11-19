@@ -60,16 +60,12 @@ def assign_crowd_status_from_attendance(
 ) -> pd.DataFrame:
     """Status from attendance first, from the config dates only when attendance is missing.
 
-    Needs the attendance and crowd_share columns (see attendance.py).
-    0 fans = empty, crowd_share below partial_below = partial, otherwise fans.
-    No attendance and no window = unknown (left out of the analysis).
-    Partial is only possible between covid_start and covid_end.
-    Adds status_from_dates and crowd_source so the two methods can be compared.
+    0 fans = empty; crowd_share below partial_below (COVID period only) = partial; otherwise fans.
+    No attendance and no date window = unknown, left out of the analysis.
     """
     out = assign_crowd_status(matches, windows)
     out["status_from_dates"] = out["crowd_status"]
 
-    # 0 fans is always usable; a positive number needs a normal crowd to compare with
     usable = (out["attendance"] == 0) | out["crowd_share"].notna()
     # small crowds outside COVID are low demand, not restrictions, so they stay "fans"
     covid = out["date"].between(covid_start, covid_end)
@@ -81,7 +77,6 @@ def assign_crowd_status_from_attendance(
     out.loc[usable, "crowd_status"] = from_attendance[usable.to_numpy()]
     out["crowd_source"] = np.where(usable, "attendance", "dates")
 
-    # no attendance and no window: the dates can't tell us anything, so don't guess "fans"
     no_window = ~usable & (out["status_from_dates"] == "fans")
     out.loc[no_window, "crowd_status"] = "unknown"
     out.loc[no_window, "crowd_source"] = "none"
