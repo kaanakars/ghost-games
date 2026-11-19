@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 DATA = Path(__file__).parent / "data"
-REPO = "https://github.com/akars7/ghost-games"
+REPO = "https://github.com/kaanakars/ghost-games"
 
 # fans vs empty
 FANS = "#2a78d6"  # blue

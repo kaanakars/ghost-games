@@ -49,7 +49,7 @@ az containerapp env create --name ghost-games-env \
   --resource-group ghost-games-rg --location canadacentral
 
 az containerapp create --name ghost-games --resource-group ghost-games-rg \
-  --environment ghost-games-env --image ghcr.io/akars7/ghost-games:latest \
+  --environment ghost-games-env --image ghcr.io/kaanakars/ghost-games:latest \
   --target-port 8000 --ingress external \
   --min-replicas 0 --max-replicas 1 --cpu 0.5 --memory 1.0Gi \
   --query properties.configuration.ingress.fqdn -o tsv

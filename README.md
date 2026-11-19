@@ -1,6 +1,6 @@
 # Ghost Games: What Empty Stadiums Reveal About Home Advantage
 
-![CI/CD](https://github.com/akars7/ghost-games/actions/workflows/ci.yml/badge.svg)
+![CI/CD](https://github.com/kaanakars/ghost-games/actions/workflows/ci.yml/badge.svg)
 
 **Live app:** https://ghost-games.yellowriver-1b3c846c.canadacentral.azurecontainerapps.io · a plain-English version of the results, with interactive charts
 
